@@ -36,8 +36,8 @@
 }
 
 .menu {
-  display: none; /* ← скрыто */
-  visibility: hidden; /* ← скрыто */
+  display: none;
+  visibility: hidden;
 }
 
 .menuList {
@@ -60,10 +60,4 @@
 
 .menuLink:hover {
   text-decoration: underline;
-}
-@media (max-width: 1920px) {
-  .nav {
-    width: 160px;
-    padding: 20px 0 20px 16px;
-  }
 }
