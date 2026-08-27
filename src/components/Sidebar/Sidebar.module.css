@@ -1,0 +1,99 @@
+.sidebar {
+  max-width: 418px;
+  padding: 20px 90px 20px 78px;
+}
+
+/* Профиль */
+.personal {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 12px 0 15px 0;
+}
+
+.personalName {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #ffffff;
+  margin-right: 16px;
+}
+
+.personalIcon {
+  width: 43px;
+  height: 43px;
+  background-color: #313131;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.personalIcon svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: #ffffff;
+}
+
+.personalIcon:hover {
+  background-color: #404040;
+}
+
+/* Плейлисты */
+.block {
+  height: 100%;
+  padding: 240px 0 0 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.item {
+  width: 250px;
+  height: 150px;
+}
+
+.item:not(:last-child) {
+  margin-bottom: 30px;
+}
+
+.link {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  transition: opacity 0.2s;
+}
+
+.img:hover {
+  opacity: 0.8;
+}
+/*
+@media (max-width: 1920px) {
+  .sidebar {
+    width: 340px; 
+    max-width: 340px; 
+    padding: 20px 24px; /
+  .item {
+    width: 220px; 
+    height: 132px;
+  }
+  .personalName {
+    font-size: 14px;
+  }
+*/

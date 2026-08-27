@@ -1,0 +1,294 @@
+.centerblock {
+  width: auto;
+  flex-grow: 3;
+  padding: 20px 40px 20px 111px;
+  flex-shrink: 1;
+}
+
+/* Поиск */
+.search {
+  width: 100%;
+  border-bottom: 1px solid #4e4e4e;
+  margin-bottom: 51px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.searchSvg {
+  width: 17px;
+  height: 17px;
+  margin-right: 5px;
+  stroke: #ffffff;
+  fill: transparent;
+}
+
+.searchText {
+  flex-grow: 100;
+  background-color: transparent;
+  border: none;
+  padding: 13px 10px 14px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #ffffff;
+  outline: none;
+}
+
+.searchText::placeholder {
+  background-color: transparent;
+  color: #ffffff;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+/* Заголовок */
+.h2 {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 64px;
+  line-height: 72px;
+  letter-spacing: -0.8px;
+  margin-bottom: 45px;
+}
+
+/* Фильтры */
+.filter {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 51px;
+}
+
+.filterTitle {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  margin-right: 15px;
+}
+
+.filterButton {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  border: 1px solid #ffffff;
+  border-radius: 60px;
+  padding: 6px 20px;
+  cursor: pointer;
+  background: transparent;
+  color: #ffffff;
+}
+
+.filterButton:not(:last-child) {
+  margin-right: 10px;
+}
+
+.filterButton:hover {
+  border-color: #d9b6ff;
+  color: #d9b6ff;
+}
+
+.filterButton:active {
+  border-color: #ad61ff;
+  color: #ad61ff;
+}
+
+/* Список треков */
+.content {
+  display: flex;
+  flex-direction: column;
+}
+
+.contentTitle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.colHeader {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: 2px;
+  color: #696969;
+  text-transform: uppercase;
+}
+
+.col01 {
+  width: 447px;
+}
+
+.col02 {
+  width: 321px;
+}
+
+.col03 {
+  width: 245px;
+}
+
+.col04 {
+  width: 60px;
+  text-align: end;
+}
+
+.colSvg {
+  width: 12px;
+  height: 12px;
+  fill: transparent;
+  stroke: #696969;
+}
+
+.contentPlaylist {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+/* Один трек */
+.playlistItem {
+  width: 100%;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.playlistTrack {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.trackTitle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 447px;
+}
+
+.trackTitleImage {
+  width: 51px;
+  height: 51px;
+  padding: 16px;
+  background: #313131;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 17px;
+}
+
+.trackTitleSvg {
+  width: 18px;
+  height: 17px;
+  fill: transparent;
+  stroke: #4e4e4e;
+}
+
+.trackTitleLink {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.trackTitleLink:hover {
+  text-decoration: underline;
+}
+
+.trackTitleSpan {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #4e4e4e;
+}
+
+.trackAuthor {
+  width: 321px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.trackAuthorLink {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #ffffff;
+  text-align: left;
+  text-decoration: none;
+}
+
+.trackAuthorLink:hover {
+  text-decoration: underline;
+}
+
+.trackAlbum {
+  width: 245px;
+}
+
+.trackAlbumLink {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #696969;
+  text-decoration: none;
+}
+
+.trackAlbumLink:hover {
+  text-decoration: underline;
+  color: #ffffff;
+}
+
+.trackTime {
+  display: flex;
+  align-items: center;
+}
+
+.trackTimeSvg {
+  width: 14px;
+  height: 12px;
+  margin-right: 17px;
+  fill: transparent;
+  stroke: #696969;
+}
+
+.trackTimeText {
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  text-align: right;
+  color: #696969;
+}
+/*@media (max-width: 1920px) {
+  .centerblock {
+    padding: 20px 40px 20px 111px; 
+  }
+  .col01,
+  .trackTitle {
+    width: 320px;
+  }
+  .col02,
+  .trackAuthor {
+    width: 200px;
+  }
+  .col03,
+  .trackAlbum {
+    width: 160px;
+  }
+  .col04 {
+    width: 50px;
+  }
+}
+*/

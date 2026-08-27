@@ -1,0 +1,69 @@
+.nav {
+  width: 244px;
+  background-color: #181818;
+  padding: 20px 0 20px 36px;
+}
+
+.logo {
+  width: 113.33px;
+  height: 43px;
+  padding: 13px 0;
+  background-color: transparent;
+  margin-bottom: 20px;
+}
+
+.logoImage {
+  width: 113.33px;
+  height: 17px;
+  color: #181818;
+}
+
+.burger {
+  width: 20px;
+  height: 36px;
+  padding: 13px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.burgerLine {
+  display: inline-block;
+  width: 100%;
+  height: 1px;
+  background-color: #d3d3d3;
+}
+
+.menu {
+  display: none; /* ← скрыто */
+  visibility: hidden; /* ← скрыто */
+}
+
+.menuList {
+  padding: 18px 0 10px 0;
+  list-style: none;
+}
+
+.menuItem {
+  padding: 5px 0;
+  margin-bottom: 16px;
+}
+
+.menuLink {
+  color: #ffffff;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  text-decoration: none;
+}
+
+.menuLink:hover {
+  text-decoration: underline;
+}
+@media (max-width: 1920px) {
+  .nav {
+    width: 160px;
+    padding: 20px 0 20px 16px;
+  }
+}
