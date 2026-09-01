@@ -13,6 +13,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  position: relative;
 }
 
 .searchSvg {
@@ -45,6 +46,25 @@
   line-height: 24px;
 }
 
+/* Кнопка очистки поиска */
+.clearSearch {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #696969;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.clearSearch:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
 /* Заголовок */
 .h2 {
   font-style: normal;
@@ -60,6 +80,8 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
   margin-bottom: 51px;
 }
 
@@ -71,6 +93,11 @@
   margin-right: 15px;
 }
 
+.filterWrapper {
+  position: relative;
+}
+
+/* Кнопка фильтра с состояниями */
 .filterButton {
   font-style: normal;
   font-weight: 400;
@@ -82,18 +109,214 @@
   cursor: pointer;
   background: transparent;
   color: #ffffff;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
 }
 
-.filterButton:not(:last-child) {
-  margin-right: 10px;
-}
-
+/* Эффект при наведении - только цвет текста и подчеркивание */
 .filterButton:hover {
-  border-color: #d9b6ff;
-  color: #d9b6ff;
+  border-color: #ffffff;
+  color: #b672ff;
+  text-decoration: underline;
 }
 
-.filterButton:active {
+/* Активное состояние (окно открыто) */
+.filterButton.active {
+  border-color: #ad61ff;
+  color: #ad61ff;
+  background: rgba(173, 97, 255, 0.1);
+}
+
+/* Фильтр применен (есть выбранное значение) */
+.filterButton.hasFilter {
+  border-color: #ad61ff;
+  color: #ad61ff;
+  background: rgba(173, 97, 255, 0.15);
+}
+
+/* Бейдж с выбранным значением */
+.filterBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #ad61ff;
+  background: rgba(173, 97, 255, 0.2);
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.filterBadge:hover {
+  background: rgba(173, 97, 255, 0.4);
+}
+
+/* ============================================
+   СПИСОК ФИЛЬТРА (ВСПЛЫВАЮЩЕЕ ОКНО)
+   ============================================ */
+
+.filterList {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  width: max-content;
+  max-width: 248px;
+  min-width: 200px;
+  background: #313131;
+  border-radius: 12px;
+  padding: 34px;
+  z-index: 100;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  animation: fadeIn 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  max-height: 300px;
+  box-sizing: border-box;
+}
+
+/* Обертка для скролла */
+.filterListScroll {
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding-right: 20px;
+}
+
+/* Стилизация скролла - WebKit */
+.filterListScroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.filterListScroll::-webkit-scrollbar-track {
+  background-color: rgba(75, 73, 73, 1);
+  border-radius: 2px;
+}
+
+.filterListScroll::-webkit-scrollbar-thumb {
+  background-color: white;
+  border-radius: 2px;
+}
+
+/* Стилизация скролла - Firefox */
+.filterListScroll {
+  scrollbar-width: thin;
+  scrollbar-color: white rgba(75, 73, 73, 1);
+}
+
+/* Список элементов */
+.filterListScroll ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* Элемент списка */
+.filterListScroll li {
+  padding: 0;
+  cursor: pointer;
+  color: #ffffff;
+  font-size: 14px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 24px;
+  max-width: 100%;
+}
+
+.filterListScroll li:hover {
+  color: #b672ff;
+  text-decoration: underline;
+}
+
+.filterListScroll li.selected {
+  color: #ad61ff;
+  text-decoration: underline;
+}
+
+/* Сброс фильтра в списке */
+.filterListScroll .resetItem {
+  color: #696969;
+  font-style: italic;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 8px;
+  margin-bottom: 4px;
+}
+
+.filterListScroll .resetItem:hover {
+  color: #b672ff;
+  text-decoration: underline;
+  font-style: normal;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Очистка всех фильтров */
+.clearAllFilters {
+  background: none;
+  border: none;
+  color: #696969;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.clearAllFilters:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Количество треков */
+.tracksCount {
+  font-size: 14px;
+  color: #696969;
+  margin-bottom: 16px;
+}
+
+/* Нет треков */
+.noTracks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+  color: #696969;
+  gap: 12px;
+}
+
+.noTracks button {
+  background: none;
+  border: 1px solid #696969;
+  color: #ffffff;
+  padding: 8px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.noTracks button:hover {
   border-color: #ad61ff;
   color: #ad61ff;
 }
@@ -271,24 +494,273 @@
   text-align: right;
   color: #696969;
 }
-/*@media (max-width: 1920px) {
+
+@media (max-width: 1366px) {
   .centerblock {
-    padding: 20px 40px 20px 111px; 
+    padding: 20px 30px 20px 30px;
   }
+
+  .filter {
+    gap: 8px;
+    margin-bottom: 30px;
+  }
+
+  .filterTitle {
+    font-size: 14px;
+    margin-right: 10px;
+  }
+
+  .filterButton {
+    font-size: 14px;
+    padding: 4px 14px;
+  }
+
+  .filterList {
+    min-width: 160px;
+    max-width: 200px;
+    max-height: 260px;
+    padding: 28px;
+  }
+
+  .filterListScroll {
+    padding-right: 16px;
+  }
+
+  .filterListScroll ul {
+    gap: 24px;
+  }
+
+  .filterListScroll li {
+    font-size: 13px;
+    line-height: 22px;
+  }
+
   .col01,
   .trackTitle {
     width: 320px;
   }
+
   .col02,
   .trackAuthor {
     width: 200px;
   }
+
   .col03,
   .trackAlbum {
     width: 160px;
   }
+
   .col04 {
     width: 50px;
   }
+
+  .h2 {
+    font-size: 48px;
+    line-height: 56px;
+    margin-bottom: 35px;
+  }
+
+  .search {
+    margin-bottom: 35px;
+  }
+
+  .trackTitleLink,
+  .trackAuthorLink,
+  .trackAlbumLink,
+  .trackTimeText {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .trackTitleImage {
+    width: 40px;
+    height: 40px;
+    padding: 12px;
+    margin-right: 12px;
+  }
+
+  .trackTimeSvg {
+    width: 12px;
+    height: 10px;
+    margin-right: 12px;
+  }
 }
-*/
+
+@media (max-width: 768px) {
+  .centerblock {
+    padding: 16px 16px 16px 16px;
+  }
+
+  .filter {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    margin-bottom: 20px;
+  }
+
+  .filterTitle {
+    margin-bottom: 4px;
+    margin-right: 0;
+  }
+
+  .filterButton {
+    font-size: 13px;
+    padding: 4px 12px;
+  }
+
+  .filterList {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 280px;
+    max-width: 90vw;
+    max-height: 60vh;
+    padding: 28px;
+  }
+
+  .filterListScroll {
+    padding-right: 16px;
+  }
+
+  .filterListScroll ul {
+    gap: 24px;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+
+  .col01,
+  .trackTitle {
+    width: 180px;
+  }
+
+  .col02,
+  .trackAuthor {
+    width: 120px;
+  }
+
+  .col03,
+  .trackAlbum {
+    width: 90px;
+  }
+
+  .col04 {
+    width: 40px;
+  }
+
+  .h2 {
+    font-size: 36px;
+    line-height: 44px;
+    margin-bottom: 25px;
+  }
+
+  .search {
+    margin-bottom: 25px;
+  }
+
+  .searchText {
+    font-size: 14px;
+    padding: 10px 8px 11px;
+  }
+
+  .searchText::placeholder {
+    font-size: 14px;
+  }
+
+  .trackTitleLink,
+  .trackAuthorLink,
+  .trackAlbumLink,
+  .trackTimeText {
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  .trackTitleImage {
+    width: 36px;
+    height: 36px;
+    padding: 10px;
+    margin-right: 10px;
+  }
+
+  .trackTitleSvg {
+    width: 14px;
+    height: 13px;
+  }
+
+  .trackTimeSvg {
+    width: 10px;
+    height: 8px;
+    margin-right: 8px;
+  }
+
+  .trackTimeText {
+    font-size: 12px;
+  }
+
+  .tracksCount {
+    font-size: 12px;
+  }
+
+  .noTracks {
+    padding: 20px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .col01,
+  .trackTitle {
+    width: 120px;
+  }
+
+  .col02,
+  .trackAuthor {
+    width: 80px;
+  }
+
+  .col03,
+  .trackAlbum {
+    width: 60px;
+  }
+
+  .col04 {
+    width: 35px;
+  }
+
+  .h2 {
+    font-size: 28px;
+    line-height: 36px;
+  }
+
+  .filterButton {
+    font-size: 12px;
+    padding: 3px 10px;
+  }
+
+  .filterList {
+    min-width: 240px;
+    max-width: 95vw;
+    padding: 24px;
+  }
+
+  .filterListScroll {
+    padding-right: 12px;
+  }
+
+  .filterListScroll ul {
+    gap: 20px;
+  }
+
+  .filterListScroll li {
+    font-size: 12px;
+    line-height: 20px;
+  }
+}

@@ -1,12 +1,45 @@
+"use client";
+import { useState } from "react";
 import Link from "next/link";
 import styles from "./Player.module.css";
+import { data, type Track } from "@/data/data";
+
+// Функция для форматирования времени
+const formatTime = (seconds: number): string => {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${secs.toString().padStart(2, "0")}`;
+};
 
 export const Player = () => {
+  // Берем первый трек из данных для примера
+  const [currentTrack] = useState<Track>(data[0]);
+  // Состояние для воспроизведения
+  const [isPlaying, setIsPlaying] = useState(false);
+  // Состояние для громкости
+  const [volume, setVolume] = useState(50);
+
+  const togglePlay = () => {
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setVolume(Number(e.target.value));
+  };
+
   return (
     <div className={styles.bar}>
       <div className={styles.content}>
         {/* Прогресс-бар */}
-        <div className={styles.playerProgress}></div>
+        <div className={styles.playerProgress}>
+          <input
+            type="range"
+            className={styles.progressLine}
+            min="0"
+            max="100"
+            defaultValue="0"
+          />
+        </div>
 
         <div className={styles.playerBlock}>
           {/* Левая часть: кнопки управления */}
@@ -17,9 +50,14 @@ export const Player = () => {
                   <use xlinkHref="/img/icon/sprite.svg#icon-prev"></use>
                 </svg>
               </div>
-              <div className={`${styles.controlBtn} ${styles.controlBtnPlay}`}>
+              <div
+                className={`${styles.controlBtn} ${styles.controlBtnPlay}`}
+                onClick={togglePlay}
+              >
                 <svg className={styles.controlBtnPlaySvg}>
-                  <use xlinkHref="/img/icon/sprite.svg#icon-play"></use>
+                  <use
+                    xlinkHref={`/img/icon/sprite.svg#${isPlaying ? "icon-pause" : "icon-play"}`}
+                  ></use>
                 </svg>
               </div>
               <div className={styles.controlBtn}>
@@ -43,24 +81,27 @@ export const Player = () => {
             <div className={styles.trackPlay}>
               <div className={styles.trackPlayContain}>
                 <div className={styles.trackPlayImage}>
-                  <svg className={styles.trackPlaySvg}>
-                    <use xlinkHref="/img/icon/sprite.svg#icon-note"></use>
-                  </svg>
+                  {currentTrack.logo ? (
+                    <img
+                      src={currentTrack.logo}
+                      alt={currentTrack.name}
+                      width={51}
+                      height={51}
+                    />
+                  ) : (
+                    <svg className={styles.trackPlaySvg}>
+                      <use xlinkHref="/img/icon/sprite.svg#icon-note"></use>
+                    </svg>
+                  )}
                 </div>
                 <div className={styles.trackPlayAuthor}>
-                  <Link
-                    href="/artist/basta"
-                    className={styles.trackPlayAuthorLink}
-                  >
-                    Ты та...
+                  <Link href="#" className={styles.trackPlayAuthorLink}>
+                    {currentTrack.name}
                   </Link>
                 </div>
                 <div className={styles.trackPlayAlbum}>
-                  <Link
-                    href="/album/basta"
-                    className={styles.trackPlayAlbumLink}
-                  >
-                    Баста
+                  <Link href="#" className={styles.trackPlayAlbumLink}>
+                    {currentTrack.author}
                   </Link>
                 </div>
               </div>
@@ -93,10 +134,11 @@ export const Player = () => {
                 <input
                   className={styles.volumeProgressLine}
                   type="range"
-                  name="range"
+                  name="volume"
                   min="0"
                   max="100"
-                  defaultValue="50"
+                  value={volume}
+                  onChange={handleVolumeChange}
                 />
               </div>
             </div>
