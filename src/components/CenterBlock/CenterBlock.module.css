@@ -764,3 +764,26 @@
     line-height: 20px;
   }
 }
+.activeDot {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-color: #ad61ff; /* ← фиолетовый цвет как в макете */
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite; /* ← анимация пульсации */
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  } /* ← нормальный размер */
+  50% {
+    opacity: 0.4;
+    transform: scale(0.7);
+  } /* ← уменьшается и бледнеет */
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  } /* ← возвращается */
+}

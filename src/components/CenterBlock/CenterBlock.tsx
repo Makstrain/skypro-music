@@ -4,6 +4,9 @@ import classNames from "classnames";
 import styles from "./CenterBlock.module.css";
 import { data, type Track } from "@/data/data";
 import { formatTime } from "@/utils/formatTime";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { setTrack } from "@/store/slices/playerSlice";
+
 import {
   getUniqueAuthors,
   getUniqueGenres,
@@ -92,7 +95,14 @@ export const CenterBlock = () => {
     if (type === "year") return selectedYear !== null;
     return false;
   };
-
+  const dispatch = useAppDispatch();
+  const handleTrackClick = (track: Track) => {
+    dispatch(setTrack(track));
+  };
+  const currentTrack = useAppSelector((state) => state.player.currentTrack);
+  const isTrackActive = (track: Track) => {
+    return currentTrack?._id === track._id;
+  };
   return (
     <div className={styles.centerblock}>
       {/* Поиск */}
@@ -291,13 +301,25 @@ export const CenterBlock = () => {
             </div>
           ) : (
             filteredTracks.map((track) => (
-              <div key={track._id} className={styles.playlistItem}>
+              <div
+                key={track._id}
+                className={styles.playlistItem}
+                onClick={() => handleTrackClick(track)}
+                style={{ cursor: "pointer" }}
+              >
                 <div className={styles.playlistTrack}>
                   <div className={`${styles.trackTitle} ${styles.col01}`}>
                     <div className={styles.trackTitleImage}>
-                      <svg className={styles.trackTitleSvg}>
-                        <use xlinkHref="/img/icon/sprite.svg#icon-note"></use>
-                      </svg>
+                      {isTrackActive(track) ? ( // ← если трек активный
+                        <span className={styles.activeDot}></span> // ← показываем пульсирующую точку
+                      ) : (
+                        // ← если не активный
+                        <svg className={styles.trackTitleSvg}>
+                          {" "}
+                          // ← показываем иконку ноты
+                          <use xlinkHref="/img/icon/sprite.svg#icon-note"></use>
+                        </svg>
+                      )}
                     </div>
                     <div>
                       <a className={styles.trackTitleLink} href="#">
