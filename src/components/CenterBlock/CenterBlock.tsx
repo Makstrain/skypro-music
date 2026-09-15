@@ -5,7 +5,7 @@ import styles from "./CenterBlock.module.css";
 import { data, type Track } from "@/data/data";
 import { formatTime } from "@/utils/formatTime";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { setTrack } from "@/store/slices/playerSlice";
+import { setPlaylistAndTrack } from "@/store/slices/playerSlice";
 
 import {
   getUniqueAuthors,
@@ -97,7 +97,12 @@ export const CenterBlock = () => {
   };
   const dispatch = useAppDispatch();
   const handleTrackClick = (track: Track) => {
-    dispatch(setTrack(track));
+    dispatch(
+      setPlaylistAndTrack({
+        playlist: filteredTracks,
+        track,
+      }),
+    );
   };
   const currentTrack = useAppSelector((state) => state.player.currentTrack);
   const isTrackActive = (track: Track) => {

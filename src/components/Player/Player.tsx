@@ -8,6 +8,10 @@ import {
   setCurrentTime,
   setDuration,
   setVolume,
+  nextTrack,
+  prevTrack,
+  toggleShuffle,
+  toggleRepeat,
 } from "@/store/slices/playerSlice";
 
 export const Player = () => {
@@ -20,6 +24,8 @@ export const Player = () => {
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const isReadyRef = useRef(false);
+  const isShuffle = useAppSelector((state) => state.player.isShuffle);
+  const isRepeat = useAppSelector((state) => state.player.isRepeat);
 
   // Сброс флага при смене трека
   useEffect(() => {
@@ -106,7 +112,20 @@ export const Player = () => {
     };
 
     const handleEnded = () => {
-      dispatch(togglePlay());
+      if (isRepeat) {
+        const audio = audioRef.current;
+        if (audio) {
+          audio.currentTime = 0;
+          audio.play().catch((error) => {
+            if (error.name !== "AbortError") {
+              console.error("Playback error:", error);
+            }
+          });
+        }
+      } else {
+        // Обычный переход к следующему
+        dispatch(nextTrack());
+      }
     };
 
     audio.addEventListener("timeupdate", handleTimeUpdate);
@@ -118,7 +137,7 @@ export const Player = () => {
       audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
       audio.removeEventListener("ended", handleEnded);
     };
-  }, [dispatch]);
+  }, [dispatch, isRepeat]);
 
   //  ОБРАБОТЧИК ГРОМКОСТИ
   const handleVolumeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -137,6 +156,20 @@ export const Player = () => {
 
   const handleTogglePlay = () => {
     dispatch(togglePlay());
+  };
+  const handleNextTrack = () => {
+    dispatch(nextTrack());
+  };
+
+  const handlePrevTrack = () => {
+    dispatch(prevTrack());
+  };
+
+  const handleToggleShuffle = () => {
+    dispatch(toggleShuffle());
+  };
+  const handleToggleRepeat = () => {
+    dispatch(toggleRepeat());
   };
 
   return (
@@ -159,7 +192,7 @@ export const Player = () => {
         <div className={styles.playerBlock}>
           <div className={styles.player}>
             <div className={styles.controls}>
-              <div className={styles.controlBtn}>
+              <div className={styles.controlBtn} onClick={handlePrevTrack}>
                 <svg className={styles.controlBtnSvg}>
                   <use xlinkHref="/img/icon/sprite.svg#icon-prev"></use>
                 </svg>
@@ -174,17 +207,23 @@ export const Player = () => {
                   ></use>
                 </svg>
               </div>
-              <div className={styles.controlBtn}>
+              <div className={styles.controlBtn} onClick={handleNextTrack}>
                 <svg className={styles.controlBtnSvg}>
                   <use xlinkHref="/img/icon/sprite.svg#icon-next"></use>
                 </svg>
               </div>
-              <div className={styles.controlBtn}>
+              <div
+                className={`${styles.controlBtn} ${isRepeat ? styles.active : ""}`}
+                onClick={handleToggleRepeat}
+              >
                 <svg className={styles.controlBtnSvg}>
                   <use xlinkHref="/img/icon/sprite.svg#icon-repeat"></use>
                 </svg>
               </div>
-              <div className={styles.controlBtn}>
+              <div
+                className={`${styles.controlBtn} ${isShuffle ? styles.active : ""}`}
+                onClick={handleToggleShuffle}
+              >
                 <svg className={styles.controlBtnSvg}>
                   <use xlinkHref="/img/icon/sprite.svg#icon-shuffle"></use>
                 </svg>

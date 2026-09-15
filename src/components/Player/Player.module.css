@@ -319,3 +319,7 @@
   }
 }
 */
+
+.controlBtn.active .controlBtnSvg {
+  stroke: #ad61ff;
+}
