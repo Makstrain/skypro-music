@@ -2,6 +2,10 @@
   width: 244px;
   background-color: #181818;
   padding: 20px 0 20px 36px;
+  flex-shrink: 0;
+  flex-grow: 0;
+  min-width: 160px;
+  position: relative; /* Добавляем для позиционирования меню */
 }
 
 .logo {
@@ -18,6 +22,7 @@
   color: #181818;
 }
 
+/* Бургер - делаем его кликабельным */
 .burger {
   width: 20px;
   height: 36px;
@@ -25,19 +30,47 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  cursor: pointer;
+  cursor: pointer; /* Добавляем указатель */
+  position: relative;
+  z-index: 10; /* Чтобы бургер был поверх меню */
 }
 
 .burgerLine {
   display: inline-block;
   width: 100%;
-  height: 1px;
+  height: 2px; /* Делаем чуть толще для видимости */
   background-color: #d3d3d3;
+  transition: all 0.3s ease; /* Анимация для превращения в крестик */
 }
 
+/* Анимация бургера в крестик при открытом меню */
+.menuOpen .burgerLine:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.menuOpen .burgerLine:nth-child(2) {
+  opacity: 0;
+}
+
+.menuOpen .burgerLine:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Меню - по умолчанию скрыто */
 .menu {
-  display: none; /* ← скрыто */
-  visibility: hidden; /* ← скрыто */
+  display: block;
+  visibility: hidden;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+/* Меню - открытое состояние */
+.menuOpen {
+  visibility: visible;
+  opacity: 1;
+  max-height: 500px; /* Достаточно для отображения всех пунктов */
 }
 
 .menuList {
@@ -56,14 +89,103 @@
   font-size: 16px;
   line-height: 24px;
   text-decoration: none;
+  transition: color 0.2s ease;
 }
 
 .menuLink:hover {
   text-decoration: underline;
+  color: #d9b6ff; /* Добавляем цвет при наведении */
 }
+
+/* Адаптивность для ноутбуков */
 @media (max-width: 1920px) {
   .nav {
     width: 160px;
     padding: 20px 0 20px 16px;
+    min-width: 140px;
+  }
+}
+
+@media (max-width: 1600px) {
+  .nav {
+    width: 140px;
+    padding: 16px 0 16px 12px;
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 1366px) {
+  .nav {
+    width: 120px;
+    padding: 12px 0 12px 10px;
+    min-width: 100px;
+  }
+
+  .logo {
+    width: 80px;
+    height: 30px;
+    margin-bottom: 15px;
+  }
+
+  .logoImage {
+    width: 80px;
+    height: 12px;
+  }
+
+  .menuLink {
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .menuItem {
+    margin-bottom: 12px;
+  }
+}
+
+/* Мобильная адаптивность - меню становится полноэкранным */
+@media (max-width: 1024px) {
+  .nav {
+    width: 100%;
+    padding: 16px;
+    flex-shrink: 1;
+    min-width: unset;
+    position: relative;
+  }
+
+  .burger {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #181818;
+    padding: 0 20px 20px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+  }
+
+  .menuOpen {
+    max-height: 500px;
+    padding: 0 20px 20px;
+  }
+
+  .menuList {
+    padding: 10px 0;
+  }
+
+  .menuItem {
+    margin-bottom: 10px;
+  }
+
+  .menuLink {
+    font-size: 16px;
+    display: block;
+    padding: 8px 0;
   }
 }
