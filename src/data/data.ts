@@ -10,7 +10,7 @@ export interface Track {
   album: string;
   logo: string | null;
   track_file: string;
-  stared_user: string[];
+  stared_user: number[];
 }
 
 export const data: Track[] = [

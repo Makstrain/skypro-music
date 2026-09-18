@@ -787,3 +787,152 @@
     transform: scale(1);
   } /* ← возвращается */
 }
+
+/* ============================================
+   СКЕЛЕТОН ЗАГРУЗКИ
+   ============================================ */
+
+.skeletonItem {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 4px 0;
+}
+
+.skeletonTitle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 447px;
+}
+
+.skeletonImage {
+  width: 51px;
+  height: 51px;
+  background: #313131;
+  border-radius: 4px;
+  margin-right: 17px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeletonBar {
+  background: linear-gradient(90deg, #313131 0%, #3a3a3a 50%, #313131 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  height: 16px;
+}
+
+.skeletonBarTitle {
+  width: 200px;
+}
+
+.skeletonBarAuthor {
+  width: 150px;
+}
+
+.skeletonBarAlbum {
+  width: 120px;
+}
+
+.skeletonBarTime {
+  width: 40px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* ============================================
+   ОШИБКА ЗАГРУЗКИ
+   ============================================ */
+
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  gap: 20px;
+  color: #696969;
+}
+
+.errorTitle {
+  font-size: 20px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.errorText {
+  font-size: 16px;
+  color: #696969;
+  text-align: center;
+  max-width: 400px;
+}
+
+.errorButton {
+  padding: 12px 32px;
+  background: #580ea2;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.errorButton:hover {
+  background: #3f007d;
+}
+
+.errorButton:active {
+  background: #271a58;
+}
+
+/* Адаптивность скелетона */
+@media (max-width: 1366px) {
+  .skeletonTitle {
+    width: 320px;
+  }
+  .skeletonBarTitle {
+    width: 140px;
+  }
+  .skeletonBarAuthor {
+    width: 100px;
+  }
+  .skeletonBarAlbum {
+    width: 80px;
+  }
+}
+
+@media (max-width: 768px) {
+  .skeletonTitle {
+    width: 180px;
+  }
+  .skeletonBarTitle {
+    width: 100px;
+  }
+  .skeletonBarAuthor {
+    width: 70px;
+  }
+  .skeletonBarAlbum {
+    width: 60px;
+  }
+}

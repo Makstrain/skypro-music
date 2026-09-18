@@ -2,16 +2,18 @@
 
 import { configureStore } from "@reduxjs/toolkit";
 import playerReducer from "./slices/playerSlice";
+import tracksReducer from "./slices/tracksSlice";
+import selectionsReducer from "./slices/selectionsSlice";
+import authReducer from "./slices/authSlice";
 
 export const store = configureStore({
   reducer: {
-    player: playerReducer, // ← Добавляем слайс плеера
-    // Позже добавим tracksReducer и другие
+    player: playerReducer,
+    tracks: tracksReducer,
+    selections: selectionsReducer,
+    auth: authReducer,
   },
 });
 
-// Тип для всего состояния
 export type RootState = ReturnType<typeof store.getState>;
-
-// Тип для dispatch
 export type AppDispatch = typeof store.dispatch;
