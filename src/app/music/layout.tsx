@@ -2,6 +2,7 @@
 import { Header } from "@/components/Header/Header";
 import { Sidebar } from "@/components/Sidebar/Sidebar";
 import { Player } from "@/components/Player/Player";
+import { Search } from "@/components/Search/Search";
 
 export default function MusicLayout({
   children,
@@ -13,7 +14,10 @@ export default function MusicLayout({
       <div className="container">
         <main className="main">
           <Header />
-          {children}
+          <div className="centerColumn">
+            <Search />
+            {children}
+          </div>
           <Sidebar />
         </main>
         <Player />

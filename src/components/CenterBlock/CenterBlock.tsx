@@ -6,7 +6,7 @@ import { type Track } from "@/data/data";
 import { formatTime } from "@/utils/formatTime";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setPlaylistAndTrack } from "@/store/slices/playerSlice";
-import { fetchTracks } from "@/store/slices/tracksSlice";
+import { fetchTracks, setSearchQuery } from "@/store/slices/tracksSlice";
 import {
   getUniqueAuthors,
   getUniqueGenres,
@@ -21,27 +21,27 @@ interface CenterBlockProps {
 }
 
 export const CenterBlock = ({ initialTracks, title }: CenterBlockProps) => {
-  // ✅ Redux
+  // Redux
   const {
     items: reduxTracks,
     loading,
     error,
+    searchQuery,
   } = useAppSelector((state) => state.tracks);
   const dispatch = useAppDispatch();
 
-  // ✅ Загружаем треки только если они не переданы через props
+  // Загружаем треки только если они не переданы через props
   useEffect(() => {
     if (!initialTracks) {
       dispatch(fetchTracks());
     }
   }, [dispatch, initialTracks]);
 
-  // ✅ Используем переданные треки или из Redux
+  // Используем переданные треки или из Redux
   const tracks = initialTracks ?? reduxTracks;
   const isLoading = initialTracks ? false : loading;
   const displayError = initialTracks ? null : error;
 
-  const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState<FilterType>(null);
   const [selectedAuthor, setSelectedAuthor] = useState<string | null>(null);
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
@@ -49,7 +49,7 @@ export const CenterBlock = ({ initialTracks, title }: CenterBlockProps) => {
 
   const filterRef = useRef<HTMLDivElement>(null);
 
-  // ✅ Уникальные значения — из текущих треков
+  // Уникальные значения — из текущих треков
   const authors = getUniqueAuthors(tracks);
   const genres = getUniqueGenres(tracks);
   const years = getUniqueYears(tracks);
@@ -111,7 +111,7 @@ export const CenterBlock = ({ initialTracks, title }: CenterBlockProps) => {
     setSelectedAuthor(null);
     setSelectedGenre(null);
     setSelectedYear(null);
-    setSearchQuery("");
+    dispatch(setSearchQuery(""));
   };
 
   const isFilterActive = (type: FilterType): boolean => {
@@ -135,34 +135,11 @@ export const CenterBlock = ({ initialTracks, title }: CenterBlockProps) => {
     return currentTrack?._id === track._id;
   };
 
-  // ✅ Заголовок — из props или "Треки"
+  // Заголовок — из props или "Треки"
   const displayTitle = title || "Треки";
 
   return (
     <div className={styles.centerblock}>
-      {/* Поиск */}
-      <div className={styles.search}>
-        <svg className={styles.searchSvg}>
-          <use xlinkHref="/img/icon/sprite.svg#icon-search"></use>
-        </svg>
-        <input
-          className={styles.searchText}
-          type="search"
-          placeholder="Поиск"
-          name="search"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-        {searchQuery && (
-          <button
-            className={styles.clearSearch}
-            onClick={() => setSearchQuery("")}
-          >
-            ✕
-          </button>
-        )}
-      </div>
-
       {/* Заголовок */}
       <h2 className={styles.h2}>{displayTitle}</h2>
 
@@ -307,7 +284,7 @@ export const CenterBlock = ({ initialTracks, title }: CenterBlockProps) => {
         )}
       </div>
 
-      {/* ✅ ОШИБКА ЗАГРУЗКИ */}
+      {/* ОШИБКА ЗАГРУЗКИ */}
       {displayError && (
         <div className={styles.errorContainer}>
           <h3 className={styles.errorTitle}>Что-то пошло не так</h3>
@@ -321,7 +298,7 @@ export const CenterBlock = ({ initialTracks, title }: CenterBlockProps) => {
         </div>
       )}
 
-      {/* ✅ СКЕЛЕТОН ПРИ ЗАГРУЗКЕ */}
+      {/* СКЕЛЕТОН ПРИ ЗАГРУЗКЕ */}
       {isLoading && !displayError && (
         <div className={styles.content}>
           <div className={styles.contentTitle}>
@@ -363,14 +340,9 @@ export const CenterBlock = ({ initialTracks, title }: CenterBlockProps) => {
         </div>
       )}
 
-      {/* ✅ СПИСОК ТРЕКОВ */}
+      {/* СПИСОК ТРЕКОВ */}
       {!isLoading && !displayError && (
         <>
-          <div className={styles.tracksCount}>
-            Найдено: {filteredTracks.length}{" "}
-            {filteredTracks.length === 1 ? "трек" : "треков"}
-          </div>
-
           <div className={styles.content}>
             <div className={styles.contentTitle}>
               <span className={`${styles.colHeader} ${styles.col01}`}>

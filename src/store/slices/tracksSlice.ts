@@ -4,25 +4,24 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { Track } from "@/data/data";
 import { getTracks } from "@/api/tracks";
 
-//  Тип состояния
 interface TracksState {
   items: Track[];
   loading: boolean;
   error: string | null;
+  searchQuery: string; // ✅ ДОБАВЛЯЕМ
 }
 
-//  Начальное состояние
 const initialState: TracksState = {
   items: [],
   loading: false,
   error: null,
+  searchQuery: "", // ✅ ДОБАВЛЯЕМ
 };
 
-//  Async thunk для загрузки треков
 export const fetchTracks = createAsyncThunk<
-  Track[], // ← что вернёт при успехе
-  void, // ← что принимает (ничего)
-  { rejectValue: string } // ← что вернёт при ошибке
+  Track[],
+  void,
+  { rejectValue: string }
 >("tracks/fetchTracks", async (_, { rejectWithValue }) => {
   try {
     const tracks = await getTracks();
@@ -34,26 +33,26 @@ export const fetchTracks = createAsyncThunk<
   }
 });
 
-//  Слайс
 const tracksSlice = createSlice({
   name: "tracks",
   initialState,
   reducers: {
-    // Очистить треки (пригодится при выходе)
     clearTracks: (state) => {
       state.items = [];
       state.error = null;
       state.loading = false;
     },
+    // ✅ НОВЫЙ ЭКШЕН
+    setSearchQuery: (state, action: PayloadAction<string>) => {
+      state.searchQuery = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
-      // Загрузка началась
       .addCase(fetchTracks.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      // Загрузка успешна
       .addCase(
         fetchTracks.fulfilled,
         (state, action: PayloadAction<Track[]>) => {
@@ -61,7 +60,6 @@ const tracksSlice = createSlice({
           state.items = action.payload;
         },
       )
-      // Загрузка с ошибкой
       .addCase(fetchTracks.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || "Неизвестная ошибка";
@@ -69,5 +67,5 @@ const tracksSlice = createSlice({
   },
 });
 
-export const { clearTracks } = tracksSlice.actions;
+export const { clearTracks, setSearchQuery } = tracksSlice.actions; // ✅ ДОБАВИЛИ
 export default tracksSlice.reducer;

@@ -3,9 +3,11 @@
 import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import styles from "./Sidebar.module.css";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchSelections } from "@/store/slices/selectionsSlice";
+import { logout } from "@/store/slices/authSlice";
 
 // Три картинки по порядку
 const PLAYLIST_IMAGES = [
@@ -16,6 +18,7 @@ const PLAYLIST_IMAGES = [
 
 export const Sidebar = () => {
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const { items, loading, error } = useAppSelector((state) => state.selections);
 
   // Загружаем подборки при монтировании
@@ -23,20 +26,29 @@ export const Sidebar = () => {
     dispatch(fetchSelections());
   }, [dispatch]);
 
+  //  Выход
+  const handleLogout = () => {
+    dispatch(logout());
+    router.push("/auth/signin");
+  };
+
   // Оставляем первые 3 с непустым items
   const displayedSelections = items
     .filter((selection) => selection.items.length > 0)
+    .sort((a, b) => a._id - b._id)
     .slice(0, 3);
 
   return (
     <div className={styles.sidebar}>
-      {/* Профиль пользователя */}
-      <div className={styles.personal}>
-        <p className={styles.personalName}>Sergey.Ivanov</p>
-        <div className={styles.personalIcon}>
-          <svg>
-            <use xlinkHref="/img/icon/sprite.svg#logout"></use>
-          </svg>
+      {/*  Кнопка выхода */}
+      <div className={styles.logoutBlock}>
+        <div className={styles.logoutIcon} onClick={handleLogout}>
+          <Image
+            src="/img/icon/logout.svg"
+            alt="Выйти"
+            width={20}
+            height={20}
+          />
         </div>
       </div>
 

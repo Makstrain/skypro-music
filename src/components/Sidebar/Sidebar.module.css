@@ -172,3 +172,55 @@
     height: 108px;
   }
 }
+/* Кнопка выхода */
+.logoutBlock {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 0 15px 0;
+}
+
+.logoutIcon {
+  width: 43px;
+  height: 43px;
+  background-color: #313131;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.logoutIcon:hover {
+  background-color: #404040;
+}
+
+.logoutIcon img {
+  width: 20px;
+  height: 20px;
+}
+
+/* Адаптивность */
+@media (max-width: 1366px) {
+  .logoutIcon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .logoutIcon img {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .logoutIcon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .logoutIcon img {
+    width: 14px;
+    height: 14px;
+  }
+}

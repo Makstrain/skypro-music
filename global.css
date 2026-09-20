@@ -30,19 +30,24 @@ body {
 }
 
 .main {
-  -webkit-box-flex: 1;
-  -ms-flex: 1 1 auto;
   flex: 1 1 auto;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
-  -webkit-box-pack: justify;
-  -ms-flex-pack: justify;
+  flex-wrap: nowrap; /* ✅ ЗАМЕНЯЕМ wrap на nowrap */
   justify-content: space-between;
+  min-width: 0; /* ✅ ДОБАВЛЯЕМ */
+  overflow: hidden; /* ✅ ДОБАВЛЯЕМ */
 }
 
 .footer {
   height: 60px;
+}
+/* globals.css */
+.centerColumn {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 3;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
+  padding: 20px 0 20px 111px; /* ← 0 справа */
 }
