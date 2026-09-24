@@ -4,12 +4,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import styles from "./Header.module.css";
 import { useState, useRef, useEffect } from "react";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { logout } from "@/store/slices/authSlice";
+import { useIsMounted } from "@/hooks/useIsMounted";
 
 export const Header = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { access } = useAppSelector((state) => state.auth);
+  const isMounted = useIsMounted();
 
   const menuRef = useRef<HTMLDivElement>(null);
   const burgerRef = useRef<HTMLDivElement>(null);
@@ -83,19 +86,41 @@ export const Header = () => {
               Главное
             </Link>
           </li>
+
+          {/* ✅ Мои треки — условный рендер */}
           <li className={styles.menuItem}>
-            <Link href="#" className={styles.menuLink} onClick={closeMenu}>
-              Мои треки
-            </Link>
+            {isMounted && access ? (
+              <Link
+                href="/music/favorites"
+                className={styles.menuLink}
+                onClick={closeMenu}
+              >
+                Мои треки
+              </Link>
+            ) : (
+              <span className={styles.menuLinkDisabled}>Мои треки</span>
+            )}
           </li>
+
+          {/* ✅ Войти / Выйти */}
           <li className={styles.menuItem}>
-            <button
-              type="button"
-              className={styles.menuLink}
-              onClick={handleLogout}
-            >
-              Выйти
-            </button>
+            {isMounted && access ? (
+              <button
+                type="button"
+                className={styles.menuLink}
+                onClick={handleLogout}
+              >
+                Выйти
+              </button>
+            ) : (
+              <Link
+                href="/auth/signin"
+                className={styles.menuLink}
+                onClick={closeMenu}
+              >
+                Войти
+              </Link>
+            )}
           </li>
         </ul>
       </div>

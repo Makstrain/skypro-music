@@ -1,33 +1,45 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import classNames from "classnames";
 import styles from "./CenterBlock.module.css";
 import { type Track } from "@/data/data";
 import { formatTime } from "@/utils/formatTime";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { setPlaylistAndTrack } from "@/store/slices/playerSlice";
-import { fetchTracks, setSearchQuery } from "@/store/slices/tracksSlice";
+import {
+  fetchTracks,
+  fetchFavorites,
+  setSearchQuery,
+} from "@/store/slices/tracksSlice";
 import {
   getUniqueAuthors,
   getUniqueGenres,
   getUniqueYears,
 } from "@/utils/filters";
+import { LikeButton } from "@/components/LikeButton/LikeButton";
 
 type FilterType = "author" | "year" | "genre" | null;
 
 interface CenterBlockProps {
   initialTracks?: Track[];
   title?: string;
+  isLoading?: boolean;
 }
 
-export const CenterBlock = ({ initialTracks, title }: CenterBlockProps) => {
+export const CenterBlock = ({
+  initialTracks,
+  title,
+  isLoading: externalIsLoading,
+}: CenterBlockProps) => {
   // Redux
   const {
     items: reduxTracks,
     loading,
     error,
     searchQuery,
+    favoritesLoaded,
   } = useAppSelector((state) => state.tracks);
+  const { access } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
 
   // Загружаем треки только если они не переданы через props
@@ -37,9 +49,24 @@ export const CenterBlock = ({ initialTracks, title }: CenterBlockProps) => {
     }
   }, [dispatch, initialTracks]);
 
+  // Загружаем избранное, если авторизован и ещё не загружено
+  useEffect(() => {
+    if (access && !favoritesLoaded) {
+      dispatch(fetchFavorites());
+    }
+  }, [dispatch, access, favoritesLoaded]);
+
   // Используем переданные треки или из Redux
   const tracks = initialTracks ?? reduxTracks;
-  const isLoading = initialTracks ? false : loading;
+
+  // Приоритет: prop isLoading > Redux loading
+  const isLoading =
+    externalIsLoading !== undefined
+      ? externalIsLoading
+      : initialTracks
+        ? false
+        : loading;
+
   const displayError = initialTracks ? null : error;
 
   const [activeFilter, setActiveFilter] = useState<FilterType>(null);
@@ -49,10 +76,31 @@ export const CenterBlock = ({ initialTracks, title }: CenterBlockProps) => {
 
   const filterRef = useRef<HTMLDivElement>(null);
 
-  // Уникальные значения — из текущих треков
-  const authors = getUniqueAuthors(tracks);
-  const genres = getUniqueGenres(tracks);
-  const years = getUniqueYears(tracks);
+  //  useMemo — уникальные значения
+  const authors = useMemo(() => getUniqueAuthors(tracks), [tracks]);
+  const genres = useMemo(() => getUniqueGenres(tracks), [tracks]);
+  const years = useMemo(() => getUniqueYears(tracks), [tracks]);
+
+  // useMemo — фильтрация
+  const filteredTracks = useMemo(() => {
+    return tracks.filter((track) => {
+      const matchesSearch =
+        track.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        track.author.toLowerCase().includes(searchQuery.toLowerCase());
+
+      const matchesAuthor = selectedAuthor
+        ? track.author === selectedAuthor
+        : true;
+      const matchesGenre = selectedGenre
+        ? track.genre.includes(selectedGenre)
+        : true;
+      const matchesYear = selectedYear
+        ? new Date(track.release_date).getFullYear() === selectedYear
+        : true;
+
+      return matchesSearch && matchesAuthor && matchesGenre && matchesYear;
+    });
+  }, [tracks, searchQuery, selectedAuthor, selectedGenre, selectedYear]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -70,70 +118,69 @@ export const CenterBlock = ({ initialTracks, title }: CenterBlockProps) => {
     };
   }, []);
 
-  const toggleFilter = (filter: FilterType) => {
-    if (activeFilter === filter) {
+  // useCallback — переключение фильтра
+  const toggleFilter = useCallback((filter: FilterType) => {
+    setActiveFilter((prev) => (prev === filter ? null : filter));
+  }, []);
+
+  //  useCallback — выбор значения фильтра
+  const handleFilterSelect = useCallback(
+    (type: FilterType, value: string | number) => {
+      if (type === "author") {
+        setSelectedAuthor((prev) =>
+          prev === value ? null : (value as string),
+        );
+      } else if (type === "genre") {
+        setSelectedGenre((prev) => (prev === value ? null : (value as string)));
+      } else if (type === "year") {
+        setSelectedYear((prev) => (prev === value ? null : (value as number)));
+      }
       setActiveFilter(null);
-    } else {
-      setActiveFilter(filter);
-    }
-  };
+    },
+    [],
+  );
 
-  const filteredTracks = tracks.filter((track) => {
-    const matchesSearch =
-      track.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      track.author.toLowerCase().includes(searchQuery.toLowerCase());
-
-    const matchesAuthor = selectedAuthor
-      ? track.author === selectedAuthor
-      : true;
-    const matchesGenre = selectedGenre
-      ? track.genre.includes(selectedGenre)
-      : true;
-    const matchesYear = selectedYear
-      ? new Date(track.release_date).getFullYear() === selectedYear
-      : true;
-
-    return matchesSearch && matchesAuthor && matchesGenre && matchesYear;
-  });
-
-  const handleFilterSelect = (type: FilterType, value: string | number) => {
-    if (type === "author") {
-      setSelectedAuthor(selectedAuthor === value ? null : (value as string));
-    } else if (type === "genre") {
-      setSelectedGenre(selectedGenre === value ? null : (value as string));
-    } else if (type === "year") {
-      setSelectedYear(selectedYear === value ? null : (value as number));
-    }
-    setActiveFilter(null);
-  };
-
-  const clearFilters = () => {
+  // useCallback — очистка фильтров
+  const clearFilters = useCallback(() => {
     setSelectedAuthor(null);
     setSelectedGenre(null);
     setSelectedYear(null);
     dispatch(setSearchQuery(""));
-  };
+  }, [dispatch]);
 
-  const isFilterActive = (type: FilterType): boolean => {
-    if (type === "author") return selectedAuthor !== null;
-    if (type === "genre") return selectedGenre !== null;
-    if (type === "year") return selectedYear !== null;
-    return false;
-  };
+  //  useCallback — проверка активного фильтра
+  const isFilterActive = useCallback(
+    (type: FilterType): boolean => {
+      if (type === "author") return selectedAuthor !== null;
+      if (type === "genre") return selectedGenre !== null;
+      if (type === "year") return selectedYear !== null;
+      return false;
+    },
+    [selectedAuthor, selectedGenre, selectedYear],
+  );
 
-  const handleTrackClick = (track: Track) => {
-    dispatch(
-      setPlaylistAndTrack({
-        playlist: filteredTracks,
-        track,
-      }),
-    );
-  };
+  // useCallback — клик по треку
+  const handleTrackClick = useCallback(
+    (track: Track) => {
+      dispatch(
+        setPlaylistAndTrack({
+          playlist: filteredTracks,
+          track,
+        }),
+      );
+    },
+    [dispatch, filteredTracks],
+  );
 
   const currentTrack = useAppSelector((state) => state.player.currentTrack);
-  const isTrackActive = (track: Track) => {
-    return currentTrack?._id === track._id;
-  };
+
+  // useCallback — проверка активного трека
+  const isTrackActive = useCallback(
+    (track: Track) => {
+      return currentTrack?._id === track._id;
+    },
+    [currentTrack],
+  );
 
   // Заголовок — из props или "Треки"
   const displayTitle = title || "Треки";
@@ -403,9 +450,7 @@ export const CenterBlock = ({ initialTracks, title }: CenterBlockProps) => {
                         </a>
                       </div>
                       <div className={styles.trackTime}>
-                        <svg className={styles.trackTimeSvg}>
-                          <use xlinkHref="/img/icon/sprite.svg#icon-like"></use>
-                        </svg>
+                        <LikeButton track={track} size="small" />
                         <span className={styles.trackTimeText}>
                           {formatTime(track.duration_in_seconds)}
                         </span>

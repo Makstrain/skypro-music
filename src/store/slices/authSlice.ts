@@ -123,6 +123,13 @@ const authSlice = createSlice({
       }
     },
 
+    setAccessToken: (state, action: PayloadAction<string>) => {
+      state.access = action.payload;
+      if (typeof window !== "undefined") {
+        localStorage.setItem("access", action.payload);
+      }
+    },
+
     //  Очистить ошибку (например, при новом запросе)
     clearError: (state) => {
       state.error = null;
@@ -168,5 +175,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, clearError } = authSlice.actions;
+export const { logout, clearError, setAccessToken } = authSlice.actions;
 export default authSlice.reducer;

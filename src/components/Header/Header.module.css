@@ -199,3 +199,27 @@ button.menuLink {
   font-family: inherit;
   text-align: left;
 }
+/* Неактивная ссылка (для неавторизованных) */
+.menuLinkDisabled {
+  color: #696969;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  cursor: not-allowed;
+  display: block;
+}
+
+@media (max-width: 1366px) {
+  .menuLinkDisabled {
+    font-size: 14px;
+    line-height: 20px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .menuLinkDisabled {
+    font-size: 16px;
+    display: block;
+    padding: 8px 0;
+  }
+}

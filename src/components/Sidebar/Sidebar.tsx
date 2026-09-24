@@ -8,6 +8,7 @@ import styles from "./Sidebar.module.css";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { fetchSelections } from "@/store/slices/selectionsSlice";
 import { logout } from "@/store/slices/authSlice";
+import { useIsMounted } from "@/hooks/useIsMounted";
 
 // Три картинки по порядку
 const PLAYLIST_IMAGES = [
@@ -20,6 +21,8 @@ export const Sidebar = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { items, loading, error } = useAppSelector((state) => state.selections);
+  const { access } = useAppSelector((state) => state.auth);
+  const isMounted = useIsMounted();
 
   // Загружаем подборки при монтировании
   useEffect(() => {
@@ -40,17 +43,19 @@ export const Sidebar = () => {
 
   return (
     <div className={styles.sidebar}>
-      {/*  Кнопка выхода */}
-      <div className={styles.logoutBlock}>
-        <div className={styles.logoutIcon} onClick={handleLogout}>
-          <Image
-            src="/img/icon/logout.svg"
-            alt="Выйти"
-            width={20}
-            height={20}
-          />
+      {/*  Кнопка выхода — только для авторизованных */}
+      {isMounted && access && (
+        <div className={styles.logoutBlock}>
+          <div className={styles.logoutIcon} onClick={handleLogout}>
+            <Image
+              src="/img/icon/logout.svg"
+              alt="Выйти"
+              width={20}
+              height={20}
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Блок с плейлистами */}
       <div className={styles.block}>

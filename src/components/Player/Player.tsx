@@ -13,6 +13,7 @@ import {
   toggleShuffle,
   toggleRepeat,
 } from "@/store/slices/playerSlice";
+import { LikeButton } from "@/components/LikeButton/LikeButton";
 
 export const Player = () => {
   const dispatch = useAppDispatch();
@@ -259,16 +260,7 @@ export const Player = () => {
               </div>
 
               <div className={styles.trackPlayLikeDis}>
-                <div className={styles.likeBtn}>
-                  <svg className={styles.likeSvg}>
-                    <use xlinkHref="/img/icon/sprite.svg#icon-like"></use>
-                  </svg>
-                </div>
-                <div className={styles.dislikeBtn}>
-                  <svg className={styles.dislikeSvg}>
-                    <use xlinkHref="/img/icon/sprite.svg#icon-dislike"></use>
-                  </svg>
-                </div>
+                <LikeButton track={currentTrack} size="small" />
               </div>
             </div>
           </div>
