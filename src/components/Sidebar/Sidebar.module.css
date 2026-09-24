@@ -97,3 +97,130 @@
     font-size: 14px;
   }
 */
+/* Скелетон загрузки подборок */
+.skeletonCard {
+  width: 250px;
+  height: 150px;
+  background: linear-gradient(90deg, #313131 0%, #3a3a3a 50%, #313131 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Ошибка */
+.errorMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px;
+  color: #696969;
+  text-align: center;
+  font-size: 14px;
+}
+
+.retryButton {
+  padding: 8px 20px;
+  background: #580ea2;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.retryButton:hover {
+  background: #3f007d;
+}
+
+/* Пустой список */
+.emptyMessage {
+  color: #696969;
+  font-size: 14px;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Адаптивность скелетона */
+@media (max-width: 1920px) {
+  .skeletonCard {
+    width: 220px;
+    height: 132px;
+  }
+}
+
+@media (max-width: 1600px) {
+  .skeletonCard {
+    width: 200px;
+    height: 120px;
+  }
+}
+
+@media (max-width: 1366px) {
+  .skeletonCard {
+    width: 180px;
+    height: 108px;
+  }
+}
+/* Кнопка выхода */
+.logoutBlock {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 0 15px 0;
+}
+
+.logoutIcon {
+  width: 43px;
+  height: 43px;
+  background-color: #313131;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.logoutIcon:hover {
+  background-color: #404040;
+}
+
+.logoutIcon img {
+  width: 20px;
+  height: 20px;
+}
+
+/* Адаптивность */
+@media (max-width: 1366px) {
+  .logoutIcon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .logoutIcon img {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .logoutIcon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .logoutIcon img {
+    width: 14px;
+    height: 14px;
+  }
+}
