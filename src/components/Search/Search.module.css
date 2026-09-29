@@ -1,0 +1,65 @@
+/* Обёртка для отступов */
+.searchWrapper {
+  padding-left: 111px;
+  padding-right: 40px;
+  margin-bottom: 51px;
+  margin-top: 13px;
+}
+
+/* Поиск с линией */
+.search {
+  width: 100%;
+  border-bottom: 1px solid #4e4e4e;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: relative;
+}
+
+.searchSvg {
+  width: 17px;
+  height: 17px;
+  margin-right: 5px;
+  stroke: #ffffff;
+  fill: transparent;
+}
+
+.searchText {
+  flex-grow: 100;
+  background-color: transparent;
+  border: none;
+  padding: 13px 10px 14px;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+  color: #ffffff;
+  outline: none;
+}
+
+.searchText::placeholder {
+  background-color: transparent;
+  color: #ffffff;
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.clearSearch {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: #696969;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.clearSearch:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.1);
+}

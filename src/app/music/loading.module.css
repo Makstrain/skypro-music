@@ -1,0 +1,197 @@
+/* src/app/music/loading.module.css */
+
+.container {
+  width: auto;
+  flex-grow: 3;
+  padding: 20px 40px 20px 111px;
+  flex-shrink: 1;
+}
+
+/* Заголовок */
+.skeletonHeader {
+  width: 200px;
+  height: 64px;
+  background: linear-gradient(90deg, #313131 0%, #3a3a3a 50%, #313131 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+  margin-bottom: 45px;
+}
+
+/* Фильтры */
+.skeletonFilters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 51px;
+}
+
+.skeletonFilterButton {
+  width: 120px;
+  height: 32px;
+  background: linear-gradient(90deg, #313131 0%, #3a3a3a 50%, #313131 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 60px;
+}
+
+/* Список треков */
+.skeletonList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.skeletonItem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 17px;
+  padding: 8px 0;
+}
+
+.skeletonImage {
+  width: 51px;
+  height: 51px;
+  background: #313131;
+  border-radius: 4px;
+  animation: pulse 1.5s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.skeletonBarTitle {
+  width: 200px;
+  height: 16px;
+  background: linear-gradient(90deg, #313131 0%, #3a3a3a 50%, #313131 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+.skeletonBarAuthor {
+  width: 150px;
+  height: 16px;
+  background: linear-gradient(90deg, #313131 0%, #3a3a3a 50%, #313131 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+.skeletonBarAlbum {
+  width: 120px;
+  height: 16px;
+  background: linear-gradient(90deg, #313131 0%, #3a3a3a 50%, #313131 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+.skeletonBarTime {
+  width: 40px;
+  height: 16px;
+  background: linear-gradient(90deg, #313131 0%, #3a3a3a 50%, #313131 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+  margin-left: auto;
+}
+
+/* Анимации */
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+/* Адаптивность */
+@media (max-width: 1366px) {
+  .container {
+    padding: 20px 30px 20px 30px;
+  }
+
+  .skeletonHeader {
+    width: 150px;
+    height: 48px;
+    margin-bottom: 35px;
+  }
+
+  .skeletonFilters {
+    margin-bottom: 35px;
+  }
+
+  .skeletonFilterButton {
+    width: 100px;
+  }
+
+  .skeletonBarTitle {
+    width: 140px;
+  }
+
+  .skeletonBarAuthor {
+    width: 100px;
+  }
+
+  .skeletonBarAlbum {
+    width: 80px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .skeletonHeader {
+    width: 100px;
+    height: 36px;
+    margin-bottom: 25px;
+  }
+
+  .skeletonFilters {
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 25px;
+  }
+
+  .skeletonFilterButton {
+    width: 120px;
+    height: 28px;
+  }
+
+  .skeletonItem {
+    gap: 10px;
+  }
+
+  .skeletonImage {
+    width: 36px;
+    height: 36px;
+  }
+
+  .skeletonBarTitle {
+    width: 100px;
+  }
+
+  .skeletonBarAuthor {
+    width: 70px;
+  }
+
+  .skeletonBarAlbum {
+    width: 60px;
+  }
+
+  .skeletonBarTime {
+    width: 30px;
+  }
+}
