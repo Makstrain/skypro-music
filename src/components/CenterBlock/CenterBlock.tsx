@@ -10,12 +10,13 @@ import {
   fetchTracks,
   fetchFavorites,
   setSearchQuery,
+  toggleAuthor,
+  toggleGenre,
+  setSortBy,
+  resetFilters,
+  type SortType,
 } from "@/store/slices/tracksSlice";
-import {
-  getUniqueAuthors,
-  getUniqueGenres,
-  getUniqueYears,
-} from "@/utils/filters";
+import { getUniqueAuthors, getUniqueGenres } from "@/utils/filters";
 import { LikeButton } from "@/components/LikeButton/LikeButton";
 
 type FilterType = "author" | "year" | "genre" | null;
@@ -25,6 +26,13 @@ interface CenterBlockProps {
   title?: string;
   isLoading?: boolean;
 }
+
+// ✅ Варианты сортировки
+const SORT_OPTIONS: { value: SortType; label: string }[] = [
+  { value: "default", label: "По умолчанию" },
+  { value: "new", label: "Сначала новые" },
+  { value: "old", label: "Сначала старые" },
+];
 
 export const CenterBlock = ({
   initialTracks,
@@ -38,6 +46,9 @@ export const CenterBlock = ({
     error,
     searchQuery,
     favoritesLoaded,
+    selectedAuthors,
+    selectedGenres,
+    sortBy,
   } = useAppSelector((state) => state.tracks);
   const { access } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
@@ -56,6 +67,11 @@ export const CenterBlock = ({
     }
   }, [dispatch, access, favoritesLoaded]);
 
+  // ✅ Сброс фильтров при монтировании (переходе на страницу)
+  useEffect(() => {
+    dispatch(resetFilters());
+  }, [dispatch]);
+
   // Используем переданные треки или из Redux
   const tracks = initialTracks ?? reduxTracks;
 
@@ -69,38 +85,60 @@ export const CenterBlock = ({
 
   const displayError = initialTracks ? null : error;
 
+  // ✅ activeFilter — локально (UI-состояние)
   const [activeFilter, setActiveFilter] = useState<FilterType>(null);
-  const [selectedAuthor, setSelectedAuthor] = useState<string | null>(null);
-  const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
-  const [selectedYear, setSelectedYear] = useState<number | null>(null);
 
   const filterRef = useRef<HTMLDivElement>(null);
 
-  //  useMemo — уникальные значения
+  // ✅ useMemo — уникальные значения из НЕотфильтрованных треков
   const authors = useMemo(() => getUniqueAuthors(tracks), [tracks]);
   const genres = useMemo(() => getUniqueGenres(tracks), [tracks]);
-  const years = useMemo(() => getUniqueYears(tracks), [tracks]);
 
-  // useMemo — фильтрация
+  // ✅ useMemo — фильтрация (И между фильтрами, ИЛИ внутри)
   const filteredTracks = useMemo(() => {
     return tracks.filter((track) => {
-      const matchesSearch =
-        track.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        track.author.toLowerCase().includes(searchQuery.toLowerCase());
-
-      const matchesAuthor = selectedAuthor
-        ? track.author === selectedAuthor
-        : true;
-      const matchesGenre = selectedGenre
-        ? track.genre.includes(selectedGenre)
-        : true;
-      const matchesYear = selectedYear
-        ? new Date(track.release_date).getFullYear() === selectedYear
+      // Поиск — только по name, startsWith
+      const matchesSearch = searchQuery.trim()
+        ? track.name.toLowerCase().startsWith(searchQuery.toLowerCase().trim())
         : true;
 
-      return matchesSearch && matchesAuthor && matchesGenre && matchesYear;
+      // Авторы (ИЛИ)
+      const matchesAuthor =
+        selectedAuthors.length === 0 || selectedAuthors.includes(track.author);
+
+      // Жанры (ИЛИ)
+      const matchesGenre =
+        selectedGenres.length === 0 ||
+        track.genre.some((g) => selectedGenres.includes(g));
+
+      return matchesSearch && matchesAuthor && matchesGenre;
     });
-  }, [tracks, searchQuery, selectedAuthor, selectedGenre, selectedYear]);
+  }, [tracks, searchQuery, selectedAuthors, selectedGenres]);
+
+  // ✅ useMemo — сортировка
+  const sortedTracks = useMemo(() => {
+    if (sortBy === "default") {
+      return filteredTracks;
+    }
+
+    const result = [...filteredTracks];
+
+    if (sortBy === "new") {
+      result.sort(
+        (a, b) =>
+          new Date(b.release_date).getTime() -
+          new Date(a.release_date).getTime(),
+      );
+    } else if (sortBy === "old") {
+      result.sort(
+        (a, b) =>
+          new Date(a.release_date).getTime() -
+          new Date(b.release_date).getTime(),
+      );
+    }
+
+    return result;
+  }, [filteredTracks, sortBy]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -118,63 +156,66 @@ export const CenterBlock = ({
     };
   }, []);
 
-  // useCallback — переключение фильтра
+  // ✅ useCallback — переключение фильтра
   const toggleFilter = useCallback((filter: FilterType) => {
     setActiveFilter((prev) => (prev === filter ? null : filter));
   }, []);
 
-  //  useCallback — выбор значения фильтра
+  // ✅ useCallback — выбор автора/жанра (toggle)
   const handleFilterSelect = useCallback(
     (type: FilterType, value: string | number) => {
       if (type === "author") {
-        setSelectedAuthor((prev) =>
-          prev === value ? null : (value as string),
-        );
+        dispatch(toggleAuthor(value as string));
       } else if (type === "genre") {
-        setSelectedGenre((prev) => (prev === value ? null : (value as string)));
-      } else if (type === "year") {
-        setSelectedYear((prev) => (prev === value ? null : (value as number)));
+        dispatch(toggleGenre(value as string));
       }
-      setActiveFilter(null);
+      // не закрываем список — можно выбрать несколько
     },
-    [],
+    [dispatch],
   );
 
-  // useCallback — очистка фильтров
+  // ✅ useCallback — сортировка
+  const handleSortSelect = useCallback(
+    (value: SortType) => {
+      dispatch(setSortBy(value));
+      setActiveFilter(null);
+    },
+    [dispatch],
+  );
+
+  // ✅ useCallback — очистка фильтров
   const clearFilters = useCallback(() => {
-    setSelectedAuthor(null);
-    setSelectedGenre(null);
-    setSelectedYear(null);
+    dispatch(resetFilters());
     dispatch(setSearchQuery(""));
   }, [dispatch]);
 
-  //  useCallback — проверка активного фильтра
+  // ✅ useCallback — проверка активного фильтра
   const isFilterActive = useCallback(
     (type: FilterType): boolean => {
-      if (type === "author") return selectedAuthor !== null;
-      if (type === "genre") return selectedGenre !== null;
-      if (type === "year") return selectedYear !== null;
+      if (type === "author") return selectedAuthors.length > 0;
+      if (type === "genre") return selectedGenres.length > 0;
+      if (type === "year") return sortBy !== "default";
       return false;
     },
-    [selectedAuthor, selectedGenre, selectedYear],
+    [selectedAuthors, selectedGenres, sortBy],
   );
 
-  // useCallback — клик по треку
+  // ✅ useCallback — клик по треку
   const handleTrackClick = useCallback(
     (track: Track) => {
       dispatch(
         setPlaylistAndTrack({
-          playlist: filteredTracks,
+          playlist: sortedTracks,
           track,
         }),
       );
     },
-    [dispatch, filteredTracks],
+    [dispatch, sortedTracks],
   );
 
   const currentTrack = useAppSelector((state) => state.player.currentTrack);
 
-  // useCallback — проверка активного трека
+  // ✅ useCallback — проверка активного трека
   const isTrackActive = useCallback(
     (track: Track) => {
       return currentTrack?._id === track._id;
@@ -184,6 +225,10 @@ export const CenterBlock = ({
 
   // Заголовок — из props или "Треки"
   const displayTitle = title || "Треки";
+
+  // ✅ Текущий выбранный вариант сортировки
+  const currentSortLabel =
+    SORT_OPTIONS.find((o) => o.value === sortBy)?.label || "По умолчанию";
 
   return (
     <div className={styles.centerblock}>
@@ -204,15 +249,9 @@ export const CenterBlock = ({
             onClick={() => toggleFilter("author")}
           >
             исполнителю
-            {selectedAuthor && (
-              <span
-                className={styles.filterBadge}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedAuthor(null);
-                }}
-              >
-                ✕
+            {selectedAuthors.length > 0 && (
+              <span className={styles.filterBadge}>
+                {selectedAuthors.length}
               </span>
             )}
           </button>
@@ -224,7 +263,7 @@ export const CenterBlock = ({
                     <li
                       key={author}
                       className={classNames({
-                        [styles.selected]: selectedAuthor === author,
+                        [styles.selected]: selectedAuthors.includes(author),
                       })}
                       onClick={() => handleFilterSelect("author", author)}
                     >
@@ -237,7 +276,7 @@ export const CenterBlock = ({
           )}
         </div>
 
-        {/* Фильтр по годам */}
+        {/* Фильтр по годам (сортировка) */}
         <div className={styles.filterWrapper}>
           <button
             className={classNames(styles.filterButton, {
@@ -247,31 +286,20 @@ export const CenterBlock = ({
             onClick={() => toggleFilter("year")}
           >
             году выпуска
-            {selectedYear && (
-              <span
-                className={styles.filterBadge}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedYear(null);
-                }}
-              >
-                {selectedYear}
-              </span>
-            )}
           </button>
           {activeFilter === "year" && (
             <div className={styles.filterList}>
               <div className={styles.filterListScroll}>
                 <ul>
-                  {years.map((year) => (
+                  {SORT_OPTIONS.map((option) => (
                     <li
-                      key={year}
+                      key={option.value}
                       className={classNames({
-                        [styles.selected]: selectedYear === year,
+                        [styles.selected]: sortBy === option.value,
                       })}
-                      onClick={() => handleFilterSelect("year", year)}
+                      onClick={() => handleSortSelect(option.value)}
                     >
-                      {year}
+                      {option.label}
                     </li>
                   ))}
                 </ul>
@@ -290,15 +318,9 @@ export const CenterBlock = ({
             onClick={() => toggleFilter("genre")}
           >
             жанру
-            {selectedGenre && (
-              <span
-                className={styles.filterBadge}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setSelectedGenre(null);
-                }}
-              >
-                ✕
+            {selectedGenres.length > 0 && (
+              <span className={styles.filterBadge}>
+                {selectedGenres.length}
               </span>
             )}
           </button>
@@ -310,7 +332,7 @@ export const CenterBlock = ({
                     <li
                       key={genre}
                       className={classNames({
-                        [styles.selected]: selectedGenre === genre,
+                        [styles.selected]: selectedGenres.includes(genre),
                       })}
                       onClick={() => handleFilterSelect("genre", genre)}
                     >
@@ -324,7 +346,10 @@ export const CenterBlock = ({
         </div>
 
         {/* Кнопка сброса всех фильтров */}
-        {(selectedAuthor || selectedGenre || selectedYear || searchQuery) && (
+        {(selectedAuthors.length > 0 ||
+          selectedGenres.length > 0 ||
+          sortBy !== "default" ||
+          searchQuery) && (
           <button className={styles.clearAllFilters} onClick={clearFilters}>
             Сбросить все
           </button>
@@ -409,13 +434,13 @@ export const CenterBlock = ({
             </div>
 
             <div className={styles.contentPlaylist}>
-              {filteredTracks.length === 0 ? (
+              {sortedTracks.length === 0 ? (
                 <div className={styles.noTracks}>
-                  <p>Треки не найдены</p>
+                  <p>Нет подходящих треков</p>
                   <button onClick={clearFilters}>Сбросить фильтры</button>
                 </div>
               ) : (
-                filteredTracks.map((track) => (
+                sortedTracks.map((track) => (
                   <div
                     key={track._id}
                     className={styles.playlistItem}

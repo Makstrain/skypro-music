@@ -139,22 +139,26 @@
 
 /* Бейдж с выбранным значением */
 .filterBadge {
+  position: absolute; /* ✅ вырываем из потока */
+  top: -10px; /* ✅ выступает сверху */
+  right: -10px; /* ✅ выступает справа */
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 12px;
-  color: #ad61ff;
-  background: rgba(173, 97, 255, 0.2);
+  font-size: 14px; /* ✅ крупнее */
+  font-weight: 500;
+  color: #ffffff; /* ✅ белый текст */
+  background: #ad61ff; /* ✅ фиолетовый фон */
   border-radius: 50%;
-  width: 20px;
-  height: 20px;
+  width: 26px; /* ✅ крупнее */
+  height: 26px;
   cursor: pointer;
   transition: all 0.2s ease;
   flex-shrink: 0;
 }
 
 .filterBadge:hover {
-  background: rgba(173, 97, 255, 0.4);
+  background: #b672ff; /* ✅ светлее при ховере */
 }
 
 /* ============================================

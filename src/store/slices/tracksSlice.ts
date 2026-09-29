@@ -8,14 +8,21 @@ import { withReauth } from "@/utils/withReauth";
 import type { RootState, AppDispatch } from "@/store";
 
 // ============================================
-// ТИП СОСТОЯНИЯ
+// ТИПЫ
 // ============================================
+
+export type SortType = "default" | "new" | "old";
 
 interface TracksState {
   items: Track[];
   loading: boolean;
   error: string | null;
   searchQuery: string;
+
+  // Фильтры
+  selectedAuthors: string[];
+  selectedGenres: string[];
+  sortBy: SortType;
 
   // избранное
   favoriteTracks: Track[];
@@ -30,7 +37,12 @@ const initialState: TracksState = {
   error: null,
   searchQuery: "",
 
-  // НОВОЕ
+  // Выбранные фильтры
+  selectedAuthors: [],
+  selectedGenres: [],
+  sortBy: "default",
+
+  // избранное
   favoriteTracks: [],
   favoritesLoading: false,
   favoritesError: null,
@@ -111,7 +123,39 @@ const tracksSlice = createSlice({
       state.searchQuery = action.payload;
     },
 
-    // добавить трек в избранное
+    // Фильтры
+    toggleAuthor: (state, action: PayloadAction<string>) => {
+      const author = action.payload;
+      if (state.selectedAuthors.includes(author)) {
+        state.selectedAuthors = state.selectedAuthors.filter(
+          (a) => a !== author,
+        );
+      } else {
+        state.selectedAuthors.push(author);
+      }
+    },
+
+    toggleGenre: (state, action: PayloadAction<string>) => {
+      const genre = action.payload;
+      if (state.selectedGenres.includes(genre)) {
+        state.selectedGenres = state.selectedGenres.filter((g) => g !== genre);
+      } else {
+        state.selectedGenres.push(genre);
+      }
+    },
+
+    setSortBy: (state, action: PayloadAction<SortType>) => {
+      state.sortBy = action.payload;
+    },
+
+    // Сброс фильтров
+    resetFilters: (state) => {
+      state.selectedAuthors = [];
+      state.selectedGenres = [];
+      state.sortBy = "default";
+    },
+
+    // избранное
     addLikedTracks: (state, action: PayloadAction<Track>) => {
       const exists = state.favoriteTracks.some(
         (t) => t._id === action.payload._id,
@@ -121,24 +165,21 @@ const tracksSlice = createSlice({
       }
     },
 
-    // убрать трек из избранного
     removeLikedTracks: (state, action: PayloadAction<Track>) => {
       state.favoriteTracks = state.favoriteTracks.filter(
         (t) => t._id !== action.payload._id,
       );
     },
 
-    // заменить весь список избранного
     setFavoriteTracks: (state, action: PayloadAction<Track[]>) => {
       state.favoriteTracks = action.payload;
     },
 
-    // очистить избранное (при logout)
     clearFavorites: (state) => {
       state.favoriteTracks = [];
       state.favoritesError = null;
       state.favoritesLoading = false;
-      state.favoritesLoaded = false; //
+      state.favoritesLoaded = false;
     },
   },
   extraReducers: (builder) => {
@@ -187,6 +228,10 @@ const tracksSlice = createSlice({
 export const {
   clearTracks,
   setSearchQuery,
+  toggleAuthor,
+  toggleGenre,
+  setSortBy,
+  resetFilters,
   addLikedTracks,
   removeLikedTracks,
   setFavoriteTracks,
